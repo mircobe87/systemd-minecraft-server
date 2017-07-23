@@ -1,0 +1,14 @@
+[Unit]
+Description=The Minecraft Server
+
+[Service]
+Type=oneshot
+User=mircobe87
+WorkingDirectory=/home/mircobe87/minecraft-server
+ExecStart=/home/mircobe87/minecraft-server/server start
+ExecStop=/home/mircobe87/minecraft-server/server stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

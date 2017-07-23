@@ -1,0 +1,62 @@
+#!/bin/bash
+
+### Server Working Directory ###
+# make sure that points to the directory which contains the server jar file.
+WD=/home/mircobe87/minecraft-server
+# ------------------------------------------------------------------------------
+
+SERVER_PID_FILE=$WD/server.pid
+BACKUP_DIR=$WD/backups
+
+function start() {
+    if [ -f "$SERVER_PID_FILE" ]; then
+        pid="$(cat "$SERVER_PID_FILE")"
+	process="$(ps -e | grep $pid)"
+	if [ -n "$process" ]; then
+	    echo "The server is alreary running [$process]"
+	    return 0
+	else
+	    echo "No server found. Dirty session. Cleaning..."
+            rm "$SERVER_PID_FILE"
+	    start
+	fi
+    else
+        java -Xmx1024M -Xms1024M -jar "$WD/minecraft_server.1.12.jar" nogui &
+	echo $! > "$SERVER_PID_FILE"
+	return 0
+    fi
+}
+
+function stop() {
+    if [ -f "$SERVER_PID_FILE" ]; then
+        pid="$(cat "$SERVER_PID_FILE")"
+        process="$(ps -e | grep $pid)"
+        if [ -n "$process" ]; then
+            kill -s TERM $pid
+            rm "$SERVER_PID_FILE"
+
+            if [ ! -d "$BACKUP_DIR" ]; then
+                mkdir "$BACKUP_DIR"
+            fi
+	    backupFileName="world.$(date -u +%Z%Y%m%d%H%M%S).tar.gz"
+	    tar -acvf $BACKUP_DIR/$backupFileName $WD/world
+
+	    return 0
+        else
+            echo "No server found. Dirty session. Cleaning..."
+            rm "$SERVER_PID_FILE"
+	    return 0
+        fi
+    else
+        echo "There is nothing to stop"
+        return 0
+    fi
+}
+
+case $1 in
+    start) start ;;
+    stop)  stop ;;
+    *) echo "Unknown command"; exit 1;;
+esac
+
+exit 0
