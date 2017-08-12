@@ -16,7 +16,8 @@ There are two files:
  - **minecraft-server.service**: is the systemd unit file that define the service.
 
 Put the **server** script where you want than edit it setting the `WD` variable:
-make it to point to the server dedicated directory.
+make it to point to the server dedicated directory, also set up the `EXE`
+variable with the name of server jar file.
 
 Now you have to edit the `[Service]` section of **minecraft-server.service** file setting the `User`,
 `WorkingDirectory`, `ExecStart` and `ExecStop` properties:

@@ -3,6 +3,12 @@
 ### Server Working Directory ###
 # make sure that points to the directory which contains the server jar file.
 WD=/home/mircobe87/minecraft-server
+
+### The name of the executable server. ###
+# i suggest you to make a symbolic link to the jar file using a generic name so
+# every time you hate to update the server with a new version you just simply
+# change the link target and you don't need to chagne this script.
+EXE="minecraft_server"
 # ------------------------------------------------------------------------------
 
 SERVER_PID_FILE=$WD/server.pid
@@ -21,7 +27,7 @@ function start() {
 	    start
 	fi
     else
-        java -Xmx1024M -Xms1024M -jar "$WD/minecraft_server.1.12.jar" nogui &
+        java -Xmx1024M -Xms1024M -jar "$WD/$EXE" nogui &
 	echo $! > "$SERVER_PID_FILE"
 	return 0
     fi
